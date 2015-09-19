@@ -2,7 +2,7 @@ CC=clang++
 CFLAGS=-std=c++11
 LDFLAGS=-std=c++11
 
-SRCS=main.cc
+SRCS=main.cc util.cc
 OBJS=$(SRCS:.cc=.o)
 EXEC=ts
 

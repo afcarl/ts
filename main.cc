@@ -1,20 +1,20 @@
-#include <iostream>
 #include <string>
-#include <vector>
 
-using std::cout;
-using std::endl;
+#include "util.h"
+
 using std::string;
-using std::vector;
-using std::unique_ptr;
+using ts::Die;
+using ts::Log;
+using ts::ReadFile;
 
 int main(int argc, char* argv[]) {
-  auto name1 = "hello";
-  auto name2 = "world";
-  vector<string> names {name1, name2};
-  for (const auto& name : names) {
-    cout << name << " ";
+  if (argc < 2) {
+    Die("Usage: ts <file>");
   }
-  cout << endl;
-  return 0;
+  string filename = argv[1];
+  string program_text;
+  if (!ReadFile(filename, &program_text)) {
+    Die("Failed to read file: " + filename);
+  }
+  Log("Read: " + program_text);
 }
