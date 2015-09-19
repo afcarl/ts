@@ -7,6 +7,12 @@
 
 namespace ts {
 
+void Assert(bool condition, const std::string& message) {
+  if (!condition) {
+    Die(message);
+  }
+}
+
 void Die(const std::string& message) {
   LogError(message);
   exit(1);

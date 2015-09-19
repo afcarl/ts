@@ -1,5 +1,8 @@
+#include <iostream>
 #include <string>
 
+#include "ast.h"
+#include "parse.h"
 #include "scan.h"
 #include "util.h"
 
@@ -7,8 +10,9 @@ using std::string;
 using ts::Die;
 using ts::Log;
 using ts::ReadFile;
+using ts::ast::Program;
+using ts::parse::Parser;
 using ts::scan::Scanner;
-using ts::scan::TypeToString;
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -19,9 +23,7 @@ int main(int argc, char* argv[]) {
   if (!ReadFile(filename, &text)) {
     Die("Failed to read file: " + filename);
   }
-  Scanner scanner(text);
-  while (scanner.HasNext()) {
-    auto tok = scanner.Next();
-    Log("Got: " + TypeToString(tok.type) + "('" + tok.cargo + "')");
-  }
+  Program program =
+      Parser(std::unique_ptr<Scanner>(new Scanner(text))).Program();
+  std::cout << program;
 }

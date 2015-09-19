@@ -13,24 +13,20 @@ namespace {
 static const char* const kTypeStrings[] = {
   "",
   "return",
-  "int",
-  "void",
   "if",
   "ident",
   "lparen",
   "rparen",
   "lbrace",
   "rbrace",
-  "lt",
-  "minus",
-  "asterisk",
+  "op",
   "semi",
   "number",
   "fin",
 };
 
 Type GetTypeForIdent(const std::string& ident) {
-  static const auto keyword_types = {RETURN, INT, VOID, IF};
+  static const auto keyword_types = {RETURN, IF};
   auto pos = std::find_if(
       keyword_types.begin(), keyword_types.end(), [&ident](Type type)->bool {
         return ident == kTypeStrings[type];
@@ -92,22 +88,14 @@ Token Scanner::EatSymbol() {
   char c = Eat();
   std::string sym(1, c);
   switch (c) {
-  case '(':
-    return {LPAREN, sym};
-  case ')':
-    return {RPAREN, sym};
-  case ';':
-    return {SEMI, sym};
-  case '<':
-    return {LT, sym};
-  case '-':
-    return {MINUS, sym};
-  case '*':
-    return {ASTERISK, sym};
-  case '{':
-    return {LBRACE, sym};
-  case '}':
-    return {RBRACE, sym};
+  case '(': return {LPAREN, sym};
+  case ')': return {RPAREN, sym};
+  case ';': return {SEMI, sym};
+  case '<': return {OP, sym};
+  case '-': return {OP, sym};
+  case '*': return {OP, sym};
+  case '{': return {LBRACE, sym};
+  case '}': return {RBRACE, sym};
   default:
     Die("Failed to eat a symbol");
     return {};
@@ -121,9 +109,7 @@ bool Scanner::IsIdent() const {
 
 Token Scanner::EatIdent() {
   std::string ident;
-  if (!IsIdent()) {
-    Die("Failed to eat an identifier");
-  }
+  Assert(IsIdent(), "Failed to eat an identifier");
   while (IsIdent()) {
     ident += Eat();
   }
@@ -137,9 +123,7 @@ bool Scanner::IsNumber() const {
 
 Token Scanner::EatNumber() {
   std::string number;
-  if (!IsNumber()) {
-    Die("Failed to eat a number");
-  }
+  Assert(IsNumber(), "Failed to eat a number");
   while (IsNumber()) {
     number += Eat();
   }
@@ -158,11 +142,10 @@ Token Scanner::Next() {
     return EatSymbol();
   } else if (IsIdent()) {
     return EatIdent();
-  } else if (IsNumber()) {
+  } else {
+    Assert(IsNumber(), "Unknown token");
     return EatNumber();
   }
-  Die("Unknown token: " + std::string(1, c));
-  return {};
 }
 
 }  // namespace scan

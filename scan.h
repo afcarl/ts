@@ -8,17 +8,13 @@ namespace scan {
 
 enum Type {
   RETURN = 1,
-  INT,
-  VOID,
   IF,
   IDENT,
   LPAREN,
   RPAREN,
   LBRACE,
   RBRACE,
-  LT,
-  MINUS,
-  ASTERISK,
+  OP,
   SEMI,
   NUMBER,
   FIN
@@ -36,6 +32,7 @@ class Scanner {
   Scanner(const std::string& text);
   bool HasNext() const;
   Token Next();
+  int Pos() const { return pos_; };
 
  private:
   char Peek() const;
