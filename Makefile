@@ -2,8 +2,8 @@ CC=clang++
 CFLAGS=-std=c++11
 LDFLAGS=-std=c++11
 
-SRCS=main.cc util.cc scan.cc parse.cc ast.cc
-HDRS=util.h scan.h parse.h ast.h
+SRCS=main.cc util.cc scan.cc parse.cc ast.cc print.cc
+HDRS=util.h scan.h parse.h ast.h print.h
 OBJS=$(SRCS:.cc=.o)
 EXEC=ts
 

@@ -5,6 +5,7 @@
 #include "parse.h"
 #include "scan.h"
 #include "util.h"
+#include "print.h"
 
 using std::string;
 using ts::Die;
@@ -13,6 +14,7 @@ using ts::ReadFile;
 using ts::ast::Program;
 using ts::parse::Parser;
 using ts::scan::Scanner;
+using ts::print::PrintVisitor;
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -25,5 +27,5 @@ int main(int argc, char* argv[]) {
   }
   std::unique_ptr<Program> program =
       Parser(std::unique_ptr<Scanner>(new Scanner(text))).Program();
-  std::cout << *program;
+  program->Accept(std::unique_ptr<PrintVisitor>(new PrintVisitor).get());
 }

@@ -9,17 +9,23 @@
 namespace ts {
 namespace ast {
 
-// <Statement> ::= <ExpressionStatement> | <ReturnStatement> | <IfStatement>
-//               | <Block>;
-class Statement {
+class Visitor;
+
+class Node {
+ public:
+  virtual void Accept(Visitor* visitor) const = 0;
 };
 
+// <Statement> ::= <ExpressionStatement> | <ReturnStatement> | <IfStatement>
+//               | <Block>;
+class Statement : public Node {};
+
 // <Expression> ::= <LogicalExpression>;
-class Expression {
-};
+class Expression : public Node {};
 
 class BinaryExpression : public Expression {
  public:
+  void Accept(Visitor* visitor) const override;
   std::string op;
   std::unique_ptr<Expression> left;
   std::unique_ptr<Expression> right;
@@ -28,18 +34,21 @@ class BinaryExpression : public Expression {
 // <IntExpression> ::= NUMBER;
 class IntExpression : public Expression {
  public:
+  void Accept(Visitor* visitor) const override;
   std::string integer;
 };
 
 // <IdentExpression> ::= IDENT;
 class IdentExpression : public Expression {
  public:
+  void Accept(Visitor* visitor) const override;
   std::string ident;
 };
 
 // <FunctionCall> ::= <Identifier> '(' <Expression>* ')';
 class FunctionCall : public Expression {
  public:
+  void Accept(Visitor* visitor) const override;
   std::string function_name;
   std::vector<std::unique_ptr<Expression>> arguments;
 };
@@ -47,39 +56,45 @@ class FunctionCall : public Expression {
 // <ExpressionStatement> ::= <Expression> ';';
 class ExpressionStatement : public Statement {
  public:
-   std::unique_ptr<Expression> expression;
+  void Accept(Visitor* visitor) const override;
+  std::unique_ptr<Expression> expression;
 };
 
 // <ReturnStatement> ::= 'return' <Expression> ';';
 class ReturnStatement : public Statement {
  public:
-   std::unique_ptr<Expression> return_value;
+  void Accept(Visitor* visitor) const override;
+  std::unique_ptr<Expression> return_value;
 };
 
 // <Block> ::= '{' <Statement>* '}';
 class Block : public Statement {
  public:
+  void Accept(Visitor* visitor) const override;
   std::vector<std::unique_ptr<Statement>> statements;
 };
 
 // <IfStatement> ::= 'if' '(' <Expression> ')' <Block>;
 class IfStatement : public Statement {
  public:
-   std::unique_ptr<Expression> antecedent;
-   std::unique_ptr<Block> consequent;
+  void Accept(Visitor* visitor) const override;
+  std::unique_ptr<Expression> antecedent;
+  std::unique_ptr<Block> consequent;
 };
 
 // <Parameter> ::= <Identifier> <Identifier>;
-class Parameter {
+class Parameter : public Node {
  public:
+  void Accept(Visitor* visitor) const override;
   std::string type;
   std::string name;
 };
 
 // <Function> ::=
 // <Identifier> <Identifier> '(' (<Parameter> (',' <Parameter>)*)? ')' <Block>;
-class Function {
+class Function : public Node {
  public:
+  void Accept(Visitor* visitor) const override;
   std::string return_type;
   std::string name;
   std::vector<std::unique_ptr<Parameter>> parameters;
@@ -87,23 +102,29 @@ class Function {
 };
 
 // <Program> ::= <Function>*;
-class Program {
+class Program : public Node {
  public:
+  void Accept(Visitor* visitor) const override;
   std::vector<std::unique_ptr<Function>> functions;
 };
 
-std::ostream& operator<<(std::ostream&, const Program&);
-std::ostream& operator<<(std::ostream&, const Function&);
-std::ostream& operator<<(std::ostream&, const Parameter&);
-std::ostream& operator<<(std::ostream&, const Statement&);
-std::ostream& operator<<(std::ostream&, const IfStatement&);
-std::ostream& operator<<(std::ostream&, const ReturnStatement&);
-std::ostream& operator<<(std::ostream&, const Block&);
-std::ostream& operator<<(std::ostream&, const Expression&);
-std::ostream& operator<<(std::ostream&, const BinaryExpression&);
-std::ostream& operator<<(std::ostream&, const IntExpression&);
-std::ostream& operator<<(std::ostream&, const IdentExpression&);
-std::ostream& operator<<(std::ostream&, const FunctionCall&);
+class Visitor {
+ public:
+  virtual void Visit(const ast::Program& node);
+  virtual void Visit(const ast::Function& node);
+  virtual void Visit(const ast::Parameter& node);
+  virtual void Visit(const ast::IfStatement& node);
+  virtual void Visit(const ast::Block& node);
+  virtual void Visit(const ast::ReturnStatement& node);
+  virtual void Visit(const ast::ExpressionStatement& node);
+  virtual void Visit(const ast::FunctionCall& node);
+  virtual void Visit(const ast::IdentExpression& node);
+  virtual void Visit(const ast::IntExpression& node);
+  virtual void Visit(const ast::BinaryExpression& node);
+  virtual void Visit(const ast::Expression& node);
+  virtual void Visit(const ast::Statement& node);
+  virtual void Visit(const ast::Node& node);
+};
 
 }  // namespace ast
 }  // namespace ts

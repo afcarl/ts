@@ -5,52 +5,90 @@ using std::endl;
 namespace ts {
 namespace ast {
 
-std::ostream& operator<<(std::ostream& os, const Program& node) {
-  return os;
+void BinaryExpression::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Function& node) {
-  return os;
+void IntExpression::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Parameter& node) {
-  return os;
+void IdentExpression::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Statement& node) {
-  return os;
+void FunctionCall::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const IfStatement& node) {
-  return os;
+void ExpressionStatement::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const ReturnStatement& node) {
-  return os;
+void ReturnStatement::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Block& node) {
-  return os;
+void Block::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Expression& node) {
-  return os;
+void IfStatement::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const BinaryExpression& node) {
-  return os;
+void Parameter::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const IntExpression& node) {
-  return os;
+void Function::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const IdentExpression& node) {
-  return os;
+void Program::Accept(Visitor* visitor) const {
+  visitor->Visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const FunctionCall& node) {
-  return os;
+void Visitor::Visit(const ast::Program& node) {
+}
+
+void Visitor::Visit(const ast::Function& node) {
+}
+
+void Visitor::Visit(const ast::Parameter& node) {
+}
+
+void Visitor::Visit(const ast::IfStatement& node) {
+}
+
+void Visitor::Visit(const ast::Block& node) {
+}
+
+void Visitor::Visit(const ast::ReturnStatement& node) {
+}
+
+void Visitor::Visit(const ast::ExpressionStatement& node) {
+}
+
+void Visitor::Visit(const ast::FunctionCall& node) {
+}
+
+void Visitor::Visit(const ast::IdentExpression& node) {
+}
+
+void Visitor::Visit(const ast::IntExpression& node) {
+}
+
+void Visitor::Visit(const ast::BinaryExpression& node) {
+}
+
+void Visitor::Visit(const ast::Expression& node) {
+}
+
+void Visitor::Visit(const ast::Statement& node) {
+}
+
+void Visitor::Visit(const ast::Node& node) {
 }
 
 }  // namespace ast
