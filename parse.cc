@@ -21,8 +21,8 @@ bool Parser::HasFunction() {
 scan::Token Parser::Eat(scan::Type token_type) {
   Assert(cur_.type == token_type,
          "Expected " + scan::TypeToString(token_type) + ", found " +
-             scan::TypeToString(cur_.type) + " at index " +
-             std::to_string(scanner_->Pos()));
+             scan::TypeToString(cur_.type) + " at position " +
+             scanner_->Pos().ToString());
   scan::Token ret = cur_;
   cur_ = scanner_->Next();
   return ret;
@@ -109,6 +109,7 @@ std::unique_ptr<ast::Expression> Parser::PrimaryExpression() {
     while (cur_.type != scan::RPAREN) {
       function_call->arguments.push_back(Expression());
     }
+    Eat(scan::RPAREN);
     return std::unique_ptr<ast::Expression>(function_call.release());
   }
   std::unique_ptr<ast::IdentExpression> expr(new ast::IdentExpression);
@@ -131,30 +132,26 @@ int Parser::OpPrecedence(const std::string& op) {
   return pos->second;
 }
 
+// Operator-precedence method.
+// See: https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method
 std::unique_ptr<ast::Expression> Parser::Expression(
     std::unique_ptr<ast::Expression> lhs,
     int min_precedence) {
-/*  if (!IsOp()) {
-    return lhs;
-  }
-  ast::BinaryExpression 
   while (IsOp() && OpPrecedence(cur_.cargo) >= min_precedence) {
     std::string op = Eat(scan::OP).cargo;
-    ast::Expression rhs = PrimaryExpression();
-    while (IsOp() && OpPrecedence(cur_.cargo) > OperatorPrecedence(op)) {
-      rhs = Expression(rhs, OpPrecedence(cur_.cargo));
+    std::unique_ptr<ast::Expression> rhs = PrimaryExpression();
+    while (IsOp() && OpPrecedence(cur_.cargo) > OpPrecedence(op)) {
+      rhs = Expression(std::move(rhs), OpPrecedence(cur_.cargo));
     }
-    lhs->left = lhs;
-    lhs->right = rhs;
-    lhs->op = op;
+    std::unique_ptr<ast::BinaryExpression> new_lhs(new ast::BinaryExpression);
+    new_lhs->left = std::move(lhs);
+    new_lhs->right = std::move(rhs);
+    new_lhs->op = op;
+    lhs = std::move(new_lhs);
   }
   return lhs;
-  */
-  return {};
 }
 
-// Operator-precedence method.
-// See: https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method
 std::unique_ptr<ast::Expression> Parser::Expression() {
   return Expression(PrimaryExpression(), 0);
 }

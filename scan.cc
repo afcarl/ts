@@ -148,5 +148,24 @@ Token Scanner::Next() {
   }
 }
 
+Position Scanner::Pos() const {
+  Position position;
+  position.row = 1;
+  position.col = 1;
+  for (int pos = 0; pos <= pos_; pos++) {
+    if (text_[pos] == '\n') {
+      position.col = 0;
+      position.row++;
+    } else {
+      position.col++;
+    }
+  }
+  return position;
+}
+
+std::string Position::ToString() {
+  return "{row=" + std::to_string(row) + ", col=" + std::to_string(col) + "}";
+}
+
 }  // namespace scan
 }  // namespace ts

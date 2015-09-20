@@ -1,6 +1,7 @@
 #ifndef SCAN_H_
 #define SCAN_H_
 
+#include <ostream>
 #include <string>
 
 namespace ts {
@@ -27,12 +28,18 @@ struct Token {
   std::string cargo;
 };
 
+struct Position {
+  int row;
+  int col;
+  std::string ToString();
+};
+
 class Scanner {
  public:
   Scanner(const std::string& text);
   bool HasNext() const;
   Token Next();
-  int Pos() const { return pos_; };
+  Position Pos() const;
 
  private:
   char Peek() const;

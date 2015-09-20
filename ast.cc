@@ -6,11 +6,6 @@ namespace ts {
 namespace ast {
 
 std::ostream& operator<<(std::ostream& os, const Program& node) {
-  os << "Program(" << endl;
-  for (const auto& function : node.functions) {
-    os << function;
-  }
-  os << ")" << endl;
   return os;
 }
 

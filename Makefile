@@ -3,6 +3,7 @@ CFLAGS=-std=c++11
 LDFLAGS=-std=c++11
 
 SRCS=main.cc util.cc scan.cc parse.cc ast.cc
+HDRS=util.h scan.h parse.h ast.h
 OBJS=$(SRCS:.cc=.o)
 EXEC=ts
 
@@ -11,7 +12,10 @@ all: $(EXEC)
 $(EXEC): $(OBJS)
 	$(CC) $(LDFLAGS) $^ -o $@
 
-%.o: %.cc
+main.o: main.cc $(HDRS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cc $(HDRS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .phony: clean
