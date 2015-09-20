@@ -9,54 +9,55 @@ namespace ts {
 namespace print {
 
 void PrintVisitor::Visit(const ast::Program& node) {
-  cout << "Program(" << endl;
+  cout << "(program";
   for (const auto& func : node.functions) {
+    cout << " ";
     func->Accept(this);
   }
-  cout << ")" << endl;
+  cout << ")";
 }
 
 void PrintVisitor::Visit(const ast::Function& node) {
-  cout << "Function(" << endl;
-  cout << "return_type = " << node.return_type << endl;
-  cout << "name = " << node.name << endl;
-  cout << "parameters = (" << endl;
+  cout << "(function ";
+  cout << "(return_type '" << node.return_type << "') ";
+  cout << "(name '" << node.name << "') ";
+  cout << "(parameters";
   for (const auto& param : node.parameters) {
+    cout << " ";
     param->Accept(this);
   }
-  cout << "body = " << endl;
+  cout << ") ";
+  cout << "(body ";
   node.body->Accept(this);
-  cout << ")" << endl;
-  cout << ")" << endl;
+  cout << ")";
+  cout << ")";
 }
 
 void PrintVisitor::Visit(const ast::Parameter& node) {
-  cout << "Parameter(";
-  cout << "type = " << node.type << ", ";
-  cout << "name = " << node.name << ")" << endl;
+  cout << "(parameter (type " << node.type << ") (name " << node.name << "))";
 }
 
 void PrintVisitor::Visit(const ast::IfStatement& node) {
-  cout << "If(" << endl;
-  cout << "antecedent = " << endl;
+  cout << "(if (antecedent ";
   node.antecedent->Accept(this);
-  cout << "consequent = " << endl;
+  cout << ") (consequent ";
   node.consequent->Accept(this);
-  cout << ")" << endl;
+  cout << "))";
 }
 
 void PrintVisitor::Visit(const ast::Block& node) {
-  cout << "Block(" << endl;
+  cout << "(block";
   for (const auto& stmt : node.statements) {
+    cout << " ";
     stmt->Accept(this);
   }
-  cout << ")" << endl;
+  cout << ")";
 }
 
 void PrintVisitor::Visit(const ast::ReturnStatement& node) {
-  cout << "ReturnStatement(" << endl;
+  cout << "(return ";
   node.return_value->Accept(this);
-  cout << ")" << endl;
+  cout << ")";
 }
 
 void PrintVisitor::Visit(const ast::ExpressionStatement& node) {
@@ -64,32 +65,29 @@ void PrintVisitor::Visit(const ast::ExpressionStatement& node) {
 }
 
 void PrintVisitor::Visit(const ast::FunctionCall& node) {
-  cout << "FunctionCall" << endl;
-  cout << "name = " << node.function_name << endl;
-  cout << "arguments = (" << endl;
+  cout << "(function_call (name '" << node.function_name << "') (arguments";
   for (const auto& arg : node.arguments) {
+    cout << " ";
     arg->Accept(this);
   }
-  cout << ")" << endl;
-  cout << ")" << endl;
+  cout << ")";
+  cout << ")";
 }
 
 void PrintVisitor::Visit(const ast::IdentExpression& node) {
-  cout << node.ident << endl;
+  cout << node.ident;
 }
 
 void PrintVisitor::Visit(const ast::IntExpression& node) {
-  cout << node.integer << endl;
+  cout << node.integer;
 }
 
 void PrintVisitor::Visit(const ast::BinaryExpression& node) {
-  cout << "BinaryExpression(" << endl;
-  cout << "op = " << node.op << endl;
-  cout << "left = ";
+  cout << "(binary_expression (op " << node.op << ") (left ";
   node.left->Accept(this);
-  cout << "right = ";
+  cout << ") (right ";
   node.right->Accept(this);
-  cout << ")" << endl;
+  cout << "))";
 }
 
 }  // namespace print

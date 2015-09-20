@@ -28,4 +28,5 @@ int main(int argc, char* argv[]) {
   std::unique_ptr<Program> program =
       Parser(std::unique_ptr<Scanner>(new Scanner(text))).Program();
   program->Accept(std::unique_ptr<PrintVisitor>(new PrintVisitor).get());
+  std::cout << std::endl;
 }
