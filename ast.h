@@ -21,8 +21,8 @@ class Expression {
 class BinaryExpression : public Expression {
  public:
   std::string op;
-  Expression left;
-  Expression right;
+  std::unique_ptr<Expression> left;
+  std::unique_ptr<Expression> right;
 };
 
 // <IntExpression> ::= NUMBER;
@@ -41,32 +41,32 @@ class IdentExpression : public Expression {
 class FunctionCall : public Expression {
  public:
   std::string function_name;
-  std::vector<Expression> arguments;
+  std::vector<std::unique_ptr<Expression>> arguments;
 };
 
 // <ExpressionStatement> ::= <Expression> ';';
 class ExpressionStatement : public Statement {
  public:
-  Expression expression;
+   std::unique_ptr<Expression> expression;
 };
 
 // <ReturnStatement> ::= 'return' <Expression> ';';
 class ReturnStatement : public Statement {
  public:
-  Expression return_value;
+   std::unique_ptr<Expression> return_value;
 };
 
 // <Block> ::= '{' <Statement>* '}';
 class Block : public Statement {
  public:
-  std::vector<Statement> statements;
+  std::vector<std::unique_ptr<Statement>> statements;
 };
 
 // <IfStatement> ::= 'if' '(' <Expression> ')' <Block>;
 class IfStatement : public Statement {
  public:
-  Expression antecedent;
-  Block consequent;
+   std::unique_ptr<Expression> antecedent;
+   std::unique_ptr<Block> consequent;
 };
 
 // <Parameter> ::= <Identifier> <Identifier>;
@@ -82,14 +82,14 @@ class Function {
  public:
   std::string return_type;
   std::string name;
-  std::vector<Parameter> parameters;
-  Block body;
+  std::vector<std::unique_ptr<Parameter>> parameters;
+  std::unique_ptr<Block> body;
 };
 
 // <Program> ::= <Function>*;
 class Program {
  public:
-  std::vector<Function> functions;
+  std::vector<std::unique_ptr<Function>> functions;
 };
 
 std::ostream& operator<<(std::ostream&, const Program&);

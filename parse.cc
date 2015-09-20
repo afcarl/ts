@@ -32,49 +32,51 @@ bool Parser::HasParameter() {
   return cur_.type == scan::IDENT;
 }
 
-ast::Parameter Parser::Parameter() {
-  ast::Parameter parameter;
-  parameter.type = Eat(scan::IDENT).cargo;
-  parameter.name = Eat(scan::IDENT).cargo;
+std::unique_ptr<ast::Parameter> Parser::Parameter() {
+  std::unique_ptr<ast::Parameter> parameter(new ast::Parameter);
+  parameter->type = Eat(scan::IDENT).cargo;
+  parameter->name = Eat(scan::IDENT).cargo;
   return parameter;
 }
 
-ast::Block Parser::Block() {
+std::unique_ptr<ast::Block> Parser::Block() {
   Eat(scan::LBRACE);
-  ast::Block block;
+  std::unique_ptr<ast::Block> block(new ast::Block);
   while (cur_.type != scan::RBRACE) {
-    block.statements.push_back(Statement());
+    block->statements.push_back(Statement());
   }
   Eat(scan::RBRACE);
   return block;
 }
 
-ast::ReturnStatement Parser::ReturnStatement() {
-  ast::ReturnStatement return_statement;
+std::unique_ptr<ast::ReturnStatement> Parser::ReturnStatement() {
+  std::unique_ptr<ast::ReturnStatement> return_statement(
+      new ast::ReturnStatement);
   Eat(scan::RETURN);
-  return_statement.return_value = Expression();
+  return_statement->return_value = Expression();
   Eat(scan::SEMI);
   return return_statement;
 }
 
-ast::IfStatement Parser::IfStatement() {
-  ast::IfStatement if_statement;
+std::unique_ptr<ast::IfStatement> Parser::IfStatement() {
+  std::unique_ptr<ast::IfStatement> if_statement(new ast::IfStatement);
   Eat(scan::IF);
   Eat(scan::LPAREN);
-  if_statement.antecedent = Expression();
+  if_statement->antecedent = Expression();
   Eat(scan::RPAREN);
-  if_statement.consequent = Block();
+  if_statement->consequent = Block();
   return if_statement;
 }
 
-ast::ExpressionStatement Parser::ExpressionStatement() {
-  ast::ExpressionStatement expression_statement;
-  expression_statement.expression = Expression();
+std::unique_ptr<ast::ExpressionStatement> Parser::ExpressionStatement() {
+  std::unique_ptr<ast::ExpressionStatement> expression_statement(
+      new ast::ExpressionStatement);
+  expression_statement->expression = Expression();
   Eat(scan::SEMI);
   return expression_statement;
 }
 
-ast::Statement Parser::Statement() {
+std::unique_ptr<ast::Statement> Parser::Statement() {
   switch (cur_.type) {
   case scan::RETURN:
     return ReturnStatement();
@@ -87,31 +89,31 @@ ast::Statement Parser::Statement() {
   }
 }
 
-ast::Expression Parser::PrimaryExpression() {
+std::unique_ptr<ast::Expression> Parser::PrimaryExpression() {
   if (cur_.type == scan::LPAREN) {
     Eat(scan::LPAREN);
-    ast::Expression expr = Expression();
+    auto expr = Expression();
     Eat(scan::RPAREN);
     return expr;
   }
   if (cur_.type == scan::NUMBER) {
-    ast::IntExpression expr;
-    expr.integer = Eat(scan::NUMBER).cargo;
-    return expr;
+    std::unique_ptr<ast::IntExpression> expr(new ast::IntExpression);
+    expr->integer = Eat(scan::NUMBER).cargo;
+    return std::unique_ptr<ast::Expression>(expr.release());
   }
   std::string ident = Eat(scan::IDENT).cargo;
   if (cur_.type == scan::LPAREN) {
     Eat(scan::LPAREN);
-    ast::FunctionCall function_call;
-    function_call.function_name = ident;
+    std::unique_ptr<ast::FunctionCall> function_call(new ast::FunctionCall);
+    function_call->function_name = ident;
     while (cur_.type != scan::RPAREN) {
-      function_call.arguments.push_back(Expression());
+      function_call->arguments.push_back(Expression());
     }
-    return function_call;
+    return std::unique_ptr<ast::Expression>(function_call.release());
   }
-  ast::IdentExpression expr;
-  expr.ident = ident;
-  return expr;
+  std::unique_ptr<ast::IdentExpression> expr(new ast::IdentExpression);
+  expr->ident = ident;
+  return std::unique_ptr<ast::Expression>(expr.release());
 }
 
 bool Parser::IsOp() {
@@ -129,8 +131,9 @@ int Parser::OpPrecedence(const std::string& op) {
   return pos->second;
 }
 
-ast::Expression Parser::Expression(const ast::Expression& lhs,
-                                   int min_precedence) {
+std::unique_ptr<ast::Expression> Parser::Expression(
+    std::unique_ptr<ast::Expression> lhs,
+    int min_precedence) {
 /*  if (!IsOp()) {
     return lhs;
   }
@@ -141,9 +144,9 @@ ast::Expression Parser::Expression(const ast::Expression& lhs,
     while (IsOp() && OpPrecedence(cur_.cargo) > OperatorPrecedence(op)) {
       rhs = Expression(rhs, OpPrecedence(cur_.cargo));
     }
-    lhs.left = lhs;
-    lhs.right = rhs;
-    lhs.op = op;
+    lhs->left = lhs;
+    lhs->right = rhs;
+    lhs->op = op;
   }
   return lhs;
   */
@@ -152,27 +155,27 @@ ast::Expression Parser::Expression(const ast::Expression& lhs,
 
 // Operator-precedence method.
 // See: https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method
-ast::Expression Parser::Expression() {
+std::unique_ptr<ast::Expression> Parser::Expression() {
   return Expression(PrimaryExpression(), 0);
 }
 
-ast::Function Parser::Function() {
-  ast::Function function;
-  function.return_type = Eat(scan::IDENT).cargo;
-  function.name = Eat(scan::IDENT).cargo;
+std::unique_ptr<ast::Function> Parser::Function() {
+  std::unique_ptr<ast::Function> function(new ast::Function);
+  function->return_type = Eat(scan::IDENT).cargo;
+  function->name = Eat(scan::IDENT).cargo;
   Eat(scan::LPAREN);
   while (HasParameter()) {
-    function.parameters.push_back(Parameter());
+    function->parameters.push_back(Parameter());
   }
   Eat(scan::RPAREN);
-  function.body = Block();
+  function->body = Block();
   return function;
 }
 
-ast::Program Parser::Program() {
-  ast::Program program;
+std::unique_ptr<ast::Program> Parser::Program() {
+  std::unique_ptr<ast::Program> program(new ast::Program);
   while (HasFunction()) {
-    program.functions.push_back(Function());
+    program->functions.push_back(Function());
   }
   return program;
 }

@@ -13,20 +13,22 @@ namespace parse {
 class Parser {
  public:
   Parser(std::unique_ptr<scan::Scanner> scanner);
-  ast::Program Program();
+  std::unique_ptr<ast::Program> Program();
 
  private:
   scan::Token Eat(scan::Type token_type);
-  ast::Statement Statement();
-  ast::IfStatement IfStatement();
-  ast::ReturnStatement ReturnStatement();
-  ast::Block Block();
-  ast::Function Function();
-  ast::Expression Expression();
-  ast::Expression Expression(const ast::Expression& lhs, int min_precedence);
-  ast::Parameter Parameter();
-  ast::ExpressionStatement ExpressionStatement();
-  ast::Expression PrimaryExpression();
+  std::unique_ptr<ast::Statement> Statement();
+  std::unique_ptr<ast::IfStatement> IfStatement();
+  std::unique_ptr<ast::ReturnStatement> ReturnStatement();
+  std::unique_ptr<ast::Block> Block();
+  std::unique_ptr<ast::Function> Function();
+  std::unique_ptr<ast::Expression> Expression();
+  std::unique_ptr<ast::Expression> Expression(
+      std::unique_ptr<ast::Expression> lhs,
+      int min_precedence);
+  std::unique_ptr<ast::Parameter> Parameter();
+  std::unique_ptr<ast::ExpressionStatement> ExpressionStatement();
+  std::unique_ptr<ast::Expression> PrimaryExpression();
 
   bool HasFunction();
   bool HasParameter();

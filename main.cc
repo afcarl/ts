@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   if (!ReadFile(filename, &text)) {
     Die("Failed to read file: " + filename);
   }
-  Program program =
+  std::unique_ptr<Program> program =
       Parser(std::unique_ptr<Scanner>(new Scanner(text))).Program();
-  std::cout << program;
+  std::cout << *program;
 }
