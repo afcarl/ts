@@ -1,2 +1,5 @@
 tegernsee
 =========
+
+> make
+> ./ts example.ts
