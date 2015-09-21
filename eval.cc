@@ -138,6 +138,7 @@ void EvalVisitor::Visit(const ast::IfStatement& node) {
 }
 
 void EvalVisitor::Visit(const ast::Block& node) {
+  PushEnv();
   for (const auto& stmt : node.statements) {
     // If we encounter a return statement, return early.
     int stack_size = return_values_.size();
@@ -146,6 +147,7 @@ void EvalVisitor::Visit(const ast::Block& node) {
       return;
     }
   }
+  PopEnv();
 }
 
 void EvalVisitor::Visit(const ast::ReturnStatement& node) {
