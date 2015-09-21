@@ -34,7 +34,7 @@ bool Parser::HasParameter() {
 
 std::unique_ptr<ast::Parameter> Parser::Parameter() {
   std::unique_ptr<ast::Parameter> parameter(new ast::Parameter);
-  parameter->type = Eat(scan::IDENT).cargo;
+  parameter->type = types::TypeFromString(Eat(scan::IDENT).cargo);
   parameter->name = Eat(scan::IDENT).cargo;
   return parameter;
 }
@@ -158,7 +158,7 @@ std::unique_ptr<ast::Expression> Parser::Expression() {
 
 std::unique_ptr<ast::Function> Parser::Function() {
   std::unique_ptr<ast::Function> function(new ast::Function);
-  function->return_type = Eat(scan::IDENT).cargo;
+  function->return_type = types::TypeFromString(Eat(scan::IDENT).cargo);
   function->name = Eat(scan::IDENT).cargo;
   Eat(scan::LPAREN);
   while (HasParameter()) {

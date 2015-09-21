@@ -7,7 +7,7 @@ namespace ts {
 
 void Assert(bool condition, const std::string& message);
 
-void Die(const std::string& message);
+void Die(const std::string& message) __attribute__((noreturn));
 
 void LogError(const std::string& message);
 

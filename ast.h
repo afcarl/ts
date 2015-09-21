@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "scan.h"
+#include "types.h"
 
 namespace ts {
 namespace ast {
@@ -86,7 +87,7 @@ class IfStatement : public Statement {
 class Parameter : public Node {
  public:
   void Accept(Visitor* visitor) const override;
-  std::string type;
+  types::Type type;
   std::string name;
 };
 
@@ -95,7 +96,7 @@ class Parameter : public Node {
 class Function : public Node {
  public:
   void Accept(Visitor* visitor) const override;
-  std::string return_type;
+  types::Type return_type;
   std::string name;
   std::vector<std::unique_ptr<Parameter>> parameters;
   std::unique_ptr<Block> body;
